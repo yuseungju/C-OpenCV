@@ -1,0 +1,96 @@
+#include <iostream>
+#include <string>
+#include <fstream>
+using namespace std;
+
+bool FitWord(string MyWord, string DicWord) {
+	int MyPos = 0;//인식한단어의 위치
+	int DicPos = 0;//사전단어의 위치
+	char MyChar = ' ';//인식단어의 문자하나
+	char DicChar = ' ';//사전단어의 문자하나
+
+	//인식한 문자열에 확실한 문자가 하나라도있으면 계속진행 
+	for (MyPos = 0; MyPos < MyWord.length(); MyPos++) {//인식문자길이만큼
+		if (MyWord.at(MyPos) != '/')//확실하게 인식된 문자이면
+			break;
+	}
+	if (MyPos == MyWord.length())//인식문자중 확실한문자가 하나도없으면
+		return false;
+
+	MyPos = 0;//인식단어위치 처음으로
+	while (true) {
+		MyChar = MyWord.at(MyPos);//인식단어의 위치에 해당하는 문자를 가져옴
+		DicChar = DicWord.at(DicPos);//사전단어의 위치에 해당하는 문자를 가져옴
+
+		if (MyChar == '/') {//인식단어의 문자하나가 불확실한 값의 문자이면
+			if (MyWord.at(MyPos + 1) == MyWord.length()) {//인식한 단어의 다음 문자가 없으면
+				return true;
+			}
+			MyPos++;//인식한 단어를 다음위치로
+
+		}
+		else if (MyChar == DicChar) {//두단어의 위치에 있는 문자값이 같으면
+			if (MyPos + 1 == MyWord.length()) {//인식한 단어의 다음 문자가 없으면
+				return true;
+			}
+			else if (DicPos + 1 == DicWord.length()) {//사전단어의 다음 문자가 없으면
+				return false;
+			}
+			MyPos++;//인식단어의 다음위치로
+			DicPos++;//사전단어의 다음위치로
+		}
+		else{// 두단어의 위치에있는 문자값이 다르면
+			if (DicPos + 1 == DicWord.length()) {//사전단어의 다음 문자가 없으면
+				return false;
+			}
+			DicPos++;//사전단어의 다음위치로
+		}
+	}
+}
+
+int main()
+{
+	fstream inFile;
+	string DicMean = "";
+	string DicWord;
+	string SDicWord;
+
+	inFile.open("사전데이터.txt");
+
+	ofstream fout;
+	fout.open("dictionary.txt");
+	int a = 0;
+	char s = 's';
+	while (!inFile.eof()){
+		inFile >> DicWord;
+		SDicWord = DicWord;
+
+		for (int d = 0; d < DicWord.length(); d++) {
+			s = DicWord.at(d);
+			if (s == '.'){
+				a = 100;
+			}
+		}
+
+		while (inFile.get() != '\n' && !inFile.eof()){
+			inFile >> DicWord;
+			DicMean += DicWord;
+			a++;
+			if (a==1 && DicWord != "///") {
+				a = 100;
+			}
+		}
+		if (a >100){//저장 x
+
+		}
+		else {//저장
+			fout << SDicWord << " ";
+			fout << DicMean << " ///\n";
+		}
+		a = 0;
+		DicMean = "";
+	}
+	fout.close();
+
+	return 0;
+}

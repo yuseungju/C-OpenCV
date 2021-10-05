@@ -1,0 +1,43 @@
+#include "Application.h"
+#include <fstream>
+using namespace std;
+int main()
+{
+	string name1 = "x.txt";
+	string name2 = "dic_x.txt";
+	char alpha = 'a';
+
+	for (char x = 'a'; x <= 'z'; x++){
+		alpha = x;
+		name1.at(0) = alpha;
+		name2.at(4) = alpha;
+
+		fstream inFile;
+		ofstream out;
+		string DicMean = "";
+		string TempMean;
+		string DicWord;
+		inFile.open(name1);//사전파일열기
+		out.open(name2);
+		while (!inFile.eof()){//파일의 모든단어중 인식단어와 유사하면 값을보관
+			inFile >> DicWord;
+
+			while (inFile.get() != '\n' && !inFile.eof()){
+				inFile >> TempMean;
+				DicMean += TempMean;
+			}
+			if (DicWord.at(0) == alpha)
+				out << endl << DicWord << DicMean;
+
+
+
+			DicMean = "";
+		}
+		inFile.close();
+		out.close();
+	}
+
+	//Application app;
+	//app.Run();
+	return 0;
+}
